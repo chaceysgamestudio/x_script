@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X Script Command Spec</title>
+<style>
+:root {
+    --bg: #0d0f11;
+    --panel: #181b1f;
+    --text: #e0e0e0;
+    --accent: #2196f3;
+    --grid: rgba(255,255,255,0.03);
+}
+.industrial {
+    --bg: #0a0c0e;
+    --panel: #121518;
+    --text: #d7d7d7;
+    --accent: #ff9800;
+    --grid: rgba(255,255,255,0.05);
+}
+body {
+    font-family: Consolas, monospace;
+    background-color: var(--bg);
+    color: var(--text);
+    margin:0;
+    padding:0;
+    background-image: 
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+        linear-gradient(var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    overflow-x: hidden;
+    position: relative;
+}
+.navbar {
+    position: sticky;
+    top:0;
+    background:#0c0e11;
+    border-bottom:3px solid var(--accent);
+    padding:12px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:100;
+}
+.title { font-size:20px; font-weight:bold; color:var(--accent); letter-spacing:1px;}
+button {
+    background: var(--accent);
+    border:none;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+    margin-left:5px;
+}
+button:hover { opacity:0.9; }
+.container { padding:30px; }
+.block {
+    background: var(--panel);
+    padding:20px;
+    border-radius:10px;
+    border-left:6px solid var(--accent);
+    white-space:pre-wrap;
+    word-break:break-word;
+    margin-bottom:20px;
+}
+h2 { border-bottom:2px solid var(--accent); padding-bottom:5px; margin-top:30px; }
+.floating-icon { position:absolute; width:40px; height:40px; pointer-events:none; opacity:0.7; user-select:none; transition:transform 0.05s linear; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="title">X Script Command Spec</div>
+    <div>
+        <button onclick="toggleTheme()">Industrial Toggle</button>
+    </div>
+</div>
+
+<div class="container">
+
+<h2>Core Execution</h2>
+<div class="block">
+sv_run()run()varset=(string)=(string)<br>
+sv_run()run()echo=(string)<br>
+sv_run()run()varchange=(string)=(string)
+</div>
+
+<h2>Math Functions</h2>
+<div class="block">
+add=(number|number|…)<br>
+sub=(number|number|…)<br>
+mul=(number|number|…)<br>
+div=(number|number|…)<br>
+mod=(number|number|…)<br>
+sin=(number|number|…)<br>
+cos=(number|number|…)<br>
+abs=(number|number|…)<br>
+log=(number|number|…)
+</div>
+
+<h2>Server Commands</h2>
+<div class="block">
+sv_clear<br>
+sv_broad=(string)<br>
+sv_cheats=(string)<br>
+sv_fps=(string)<br>
+sv_timer=(string)<br>
+sv_timerstop=(string)<br>
+sv_readtimer=(string)
+</div>
+
+<h2>Input / Events</h2>
+<div class="block">
+sv_keypress=(string)=(event)<br>
+sv_timewhen=(string)=(delay 1=sec 0.01=mil):sv_run()run()(event)
+</div>
+
+</div>
+
+<script>
+let icons=[];
+const NUM_ICONS=25;
+const industrialIcons=["assets/icon1.png","assets/icon2.png","assets/icon3.png"];
+function createIcons(){
+    if(!document.body.classList.contains("industrial")) return;
+    for(let i=0;i<NUM_ICONS;i++){
+        const img=document.createElement("img");
+        img.className="floating-icon";
+        img.src=industrialIcons[i%industrialIcons.length];
+        img.style.left=Math.random()*window.innerWidth+"px";
+        img.style.top=Math.random()*window.innerHeight+"px";
+        document.body.appendChild(img);
+        icons.push({el:img,x:parseFloat(img.style.left),y:parseFloat(img.style.top),dx:(Math.random()-0.5)*1,dy:(Math.random()-0.5)*1});
+    }
+}
+function animateIcons(){
+    icons.forEach(icon=>{
+        icon.x+=icon.dx;
+        icon.y+=icon.dy;
+        if(icon.x<0||icon.x>window.innerWidth-40) icon.dx*=-1;
+        if(icon.y<0||icon.y>window.innerHeight-40) icon.dy*=-1;
+        icon.el.style.transform=`translate(${icon.x}px,${icon.y}px)`;
+    });
+    requestAnimationFrame(animateIcons);
+}
+function toggleTheme(){
+    document.body.classList.toggle("industrial");
+    icons.forEach(icon=>icon.el.remove());
+    icons=[];
+    createIcons();
+}
+
+// init
+createIcons();
+animateIcons();
+</script>
+
+</body>
+</html>
